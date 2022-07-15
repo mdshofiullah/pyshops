@@ -1,10 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    {% load crispy_forms_tags %}
+    <meta charset="UTF-8">
+    <title>Register Form</title>
 </head>
 <body>
-$END$
+<form action="" method="post">
+    {% csrf_token %}
+    {{ form | crispy }}
+    <br>
+    <input type="submit" value="Create Account">
+</form>
+
 </body>
 </html>
