@@ -25,7 +25,7 @@ class Cart(models.Model):
     def variation_single_price(self):
         sizes = VariationValue.objects.filter(variation='size', product=self.item)
 
-        colors = VariationValue.objects.filter(variation='color', product = self.item)
+        colors = VariationValue.objects.filter(variation='color', product=self.item)
 
         for size in sizes:
             if colors.exists():
@@ -67,12 +67,18 @@ class Cart(models.Model):
 
 
 class Order(models.Model):
+    PAYMENT_METHOD = (
+        ('Cash on Delivery', 'Cash on Delivery'),
+        ('PayPal', 'PayPal'),
+        ('SSLcommerz', 'SSLcommerz'),
+    )
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='order')
     orderItems = models.ManyToManyField(Cart)
     ordered = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     paymentId = models.CharField(max_length=255, blank=True, null=True)
     orderId = models.CharField(max_length=255, blank=True, null=True)
+    payment_method = models.CharField(max_length=30, choices=PAYMENT_METHOD, default='Cash on Delivery')
 
     def get_totals(self):
         total = 0

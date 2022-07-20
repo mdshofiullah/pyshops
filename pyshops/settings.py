@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'account',
     'store',
     'order',
+    'coupon',
+    'payment',
 
 ]
 
@@ -140,3 +142,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media_root')
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# from paypal developer account sandbox
+PAYPAL_CLIENT_ID = "AbqPbC0lM6YwF7wt0-NzmwGw-BdGVUsDzC6mCzZBf5pKlurqOJMvB9vvGCuH9fKwRyS10Qbl0G7fwxPu"
+PAYPAL_CLIENT_SECRET = "EKj4F4IU0OspiCqpXwkGSYPQ4fnZMFd370lCzMFzLLDzXVNakZA5rR4VypkhyN5SOiCuAxamHap03vI3"

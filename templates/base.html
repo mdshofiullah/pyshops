@@ -92,7 +92,7 @@
                         <i class="icon-bars"></i>
                     </button>
 
-                    <a href="#" class="logo">
+                    <a href="{% url 'store:index' %}" class="logo">
                         <img src="/static/assets/images/PyShop_Logo.png" alt="PyShop Logo" width="105" height="25">
                     </a>
                 </div><!-- End .header-left -->
@@ -253,7 +253,7 @@
                     <nav class="main-nav">
                         <ul class="menu sf-arrows">
                             <li class="megamenu-container active">
-                                <a href="index.html" class="sf-with-ul">Home</a>
+                                <a href="{% url 'store:index' %}" class="sf-with-ul">Home</a>
 
                                 <div class="megamenu demo">
                                     <div class="menu-col">
@@ -1160,6 +1160,9 @@
 <!-- Main JS File -->
 <script src="{% static 'assets/js/main.js' %}"></script>
 <script src="{% static 'assets/js/demos/demo-4.js' %}"></script>
+
+{% block paypal %}
+{% endblock paypal %}
 </body>
 
 
