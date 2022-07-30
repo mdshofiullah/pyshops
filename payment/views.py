@@ -3,12 +3,15 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
 
 # models
+from django.urls import reverse
+
 from payment.models import BillingAddress
 from payment.forms import BillingAddressFrom, PaymentMethodForm
 from order.models import Cart, Order
 
 
 from django.conf import settings
+import json
 # view
 from django.views.generic import TemplateView
 
@@ -23,12 +26,15 @@ class CheckoutTemplateView(TemplateView):
         order_qs = Order.objects.filter(user=request.user, ordered=False)
         order_item = order_qs[0].orderItems.all()
         order_total = order_qs[0].get_totals()
+
+        pay_meth = request.GET.get('pay_meth')
         context = {
             'billing_address': form,
             'order_item': order_item,
             'order_total': order_total,
             'payment_method': payment_method,
-            'paypal_client_id': settings.PAYPAL_CLIENT_ID
+            'paypal_client_id': settings.PAYPAL_CLIENT_ID,
+            'pay_meth' : pay_meth,
         }
         return render(request, 'store/checkout.html', context)
 
@@ -62,3 +68,30 @@ class CheckoutTemplateView(TemplateView):
                         item.save()
                     print('Order Submitted successfully')
                     return redirect('store:index')
+
+                # Paypal payment process
+                if pay_method.payment_method == 'PayPal':
+                    return redirect(reverse('checkout') + "?pay_meth=" + str(pay_method.payment_method))
+
+
+
+def paypalPaymentMethod(request):
+    data = json.loads(request.body)
+    order_id = data['order_id']
+    payment_id = data['payment_id']
+    status = data['status']
+
+    if status == "COMPLETED":
+        if request.user.is_authenticated:
+            order_qs = Order.objects.filter(user=request.user, ordered=False)
+            order = order_qs[0]
+            order.ordered = True
+            order.orderId = order_id
+            order.paymentId = payment_id
+            order.save()
+            cart_items = Cart.objects.filter(user=request.user, purchased=False)
+            for item in cart_items:
+                item.purchased = True
+                item.save()
+    return redirect('store:index')
+
