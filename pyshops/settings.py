@@ -145,3 +145,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # from paypal developer account sandbox
 PAYPAL_CLIENT_ID = "AbqPbC0lM6YwF7wt0-NzmwGw-BdGVUsDzC6mCzZBf5pKlurqOJMvB9vvGCuH9fKwRyS10Qbl0G7fwxPu"
 PAYPAL_CLIENT_SECRET = "EKj4F4IU0OspiCqpXwkGSYPQ4fnZMFd370lCzMFzLLDzXVNakZA5rR4VypkhyN5SOiCuAxamHap03vI3"
+
+STORE_ID = 'pysho62e59c00e7d01'
+STORE_PASS = 'pysho62e59c00e7d01@ssl'
+
+#  Email access
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'mdshofiullah65@gmail.com'
+EMAIL_HOST_PASSWORD = '123shofi'
+

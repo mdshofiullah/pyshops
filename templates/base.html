@@ -3,24 +3,25 @@
 
 <head>
     {% load category %}
+    {% load logoInfo %}
     {% load cart_product %}
     {% load static %}
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>PyShops</title>
+    <title>{% block title %}{% endblock title %}</title>
     <meta name="keywords" content="HTML5 Template">
-    <meta name="description" content="Molla - Bootstrap eCommerce Template">
-    <meta name="author" content="p-themes">
+    <meta name="description" content="">
+    <meta name="author" content="">
     <!-- Favicon -->
     <link rel="apple-touch-icon" sizes="180x180" href="{% static 'assets/images/icons/apple-touch-icon.png' %}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'assets/images/icons/favicon-32x32.png' %}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'assets/images/icons/favicon-16x16.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static '{{ request.user|favicon }}' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static '{{ request.user|favicon }}' %}">
     <link rel="manifest" href="{% static 'assets/images/icons/site.html' %}">
     <link rel="mask-icon" href="{% static 'assets/images/icons/safari-pinned-tab.svg' %}" color="#666666">
-    <link rel="shortcut icon" href="{% static 'assets/images/icons/favicon.ico' %}">
-    <meta name="apple-mobile-web-app-title" content="Molla">
-    <meta name="application-name" content="Molla">
+    <link rel="shortcut icon" href="{% static '{{ request.user|favicon }}' %}">
+    <meta name="apple-mobile-web-app-title" content="">
+    <meta name="application-name" content="">
     <meta name="msapplication-TileColor" content="#cc9966">
     <meta name="msapplication-config" content="{% static 'assets/images/icons/browserconfig.xml' %}">
     <meta name="theme-color" content="#ffffff">
@@ -93,18 +94,19 @@
                     </button>
 
                     <a href="{% url 'store:index' %}" class="logo">
-                        <img src="/static/assets/images/PyShop_Logo.png" alt="PyShop Logo" width="105" height="25">
+                        <img src="{{ request.user|logo }}" alt="PyShop Logo" width="105" height="25">
                     </a>
                 </div><!-- End .header-left -->
 
                 <div class="header-center">
                     <div class="header-search header-search-extended header-search-visible d-none d-lg-block">
                         <a href="#" class="search-toggle" role="button"><i class="icon-search"></i></a>
-                        <form action="#" method="get">
+                        <form action="" method="post">
+                            {% csrf_token %}
                             <div class="header-search-wrapper search-wrapper-wide">
                                 <label for="q" class="sr-only">Search</label>
                                 <button class="btn btn-primary" type="submit"><i class="icon-search"></i></button>
-                                <input type="search" class="form-control" name="q" id="q"
+                                <input type="search" class="form-control" name="search_product" id="q"
                                        placeholder="Search product ..." required>
                             </div><!-- End .header-search-wrapper -->
                         </form>
@@ -724,9 +726,9 @@
                             <h4 class="widget-title">Useful Links</h4><!-- End .widget-title -->
 
                             <ul class="widget-list">
-                                <li><a href="about.html">About Molla</a></li>
+                                <li><a href="about.html">About </a></li>
                                 <li><a href="#">Our Services</a></li>
-                                <li><a href="#">How to shop on Molla</a></li>
+                                <li><a href="#">How to shop on </a></li>
                                 <li><a href="faq.html">FAQ</a></li>
                                 <li><a href="contact.html">Contact us</a></li>
                             </ul><!-- End .widget-list -->

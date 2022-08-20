@@ -7,6 +7,12 @@ from account.forms import RegistrationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
 
+from order.models import Cart, Order
+from payment.models import BillingAddress
+from account.models import Profile
+
+from django.views.generic import TemplateView
+
 
 def register(request):
     if request.user.is_authenticated:
@@ -20,7 +26,7 @@ def register(request):
                 return HttpResponse('Your Account created successfully')
 
         context = {
-            'form' : form
+            'form': form
         }
     return render(request, 'register.html', context)
 
@@ -32,7 +38,7 @@ def Customerlogin(request):
         if request.method == 'post' or request.method == 'POST':
             username = request.POST.get('username')
             password = request.POST.get('password')
-            customer = authenticate(request, username = username, password = password)
+            customer = authenticate(request, username=username, password=password)
             if customer is not None:
                 login(request, customer)
                 return HttpResponse('you logged in successfully!')
@@ -40,3 +46,19 @@ def Customerlogin(request):
                 return HttpResponse('404')
 
     return render(request, 'login.html')
+
+
+# Customer Profile
+
+class ProfileView(TemplateView):
+    def get(self, request, *args, **kwargs):
+        orders = Order.objects.filter(user=request.user, ordered=True)
+
+        context = {
+            'orders': orders,
+        }
+
+        return render(request, 'profile.html', context)
+
+    def __pos__(self, request, *args, **kwargs):
+        pass
