@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 
 from account.forms import RegistrationForm
@@ -9,6 +9,7 @@ from django.contrib.auth import login, logout, authenticate
 
 from order.models import Cart, Order
 from payment.models import BillingAddress
+from payment.forms import BillingAddressFrom
 from account.models import Profile
 
 from django.views.generic import TemplateView
@@ -53,12 +54,21 @@ def Customerlogin(request):
 class ProfileView(TemplateView):
     def get(self, request, *args, **kwargs):
         orders = Order.objects.filter(user=request.user, ordered=True)
+        billingaddress = BillingAddress.objects.get(user=request.user)
 
+        billingaddress_form = BillingAddressFrom(instance=billingaddress)
         context = {
             'orders': orders,
+            'billingaddress': billingaddress_form,
         }
 
         return render(request, 'profile.html', context)
 
-    def __pos__(self, request, *args, **kwargs):
-        pass
+    def post(self, request, *args, **kwargs):
+        if request.method == 'post' or request.method == 'POST':
+            billingaddress = BillingAddress.objects.get(user=request.user)
+
+            billingaddress_form = BillingAddressFrom(request.POST, instance=billingaddress)
+            if billingaddress_form.is_valid():
+                billingaddress_form.save()
+                return redirect('account:profile')

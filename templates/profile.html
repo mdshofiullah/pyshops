@@ -83,10 +83,8 @@
                                     <tr>
                                         <th scope="row">{{ order.id }}</th>
                                         <td>
-                                            {% for product in order.orderitems %}
-                                            <ul>
-                                                <li>{{ product.name }}</li>
-                                            </ul>
+                                            {% for order_item in order.orderItems.all %}
+                                                {{ order_item }}
                                             {% endfor %}
                                         </td>
                                         <td>{{ order.paymentId }}</td>
@@ -116,13 +114,13 @@
                                         <div class="card card-dashboard">
                                             <div class="card-body">
                                                 <h3 class="card-title">Billing Address</h3><!-- End .card-title -->
+                                                <form action="" method="post">
+                                                    {% csrf_token %}
+                                                    {{ billingaddress }}
+                                                    <br>
+                                                    <input type="submit" value="Save Address">
+                                                </form>
 
-                                                <p>User Name<br>
-                                                    User Company<br>
-                                                    John str<br>
-                                                    New York, NY 10001<br>
-                                                    1-234-987-6543<br>
-                                                    yourmail@mail.com<br>
                                                     <a href="#">Edit <i class="icon-edit"></i></a></p>
                                             </div><!-- End .card-body -->
                                         </div><!-- End .card-dashboard -->
