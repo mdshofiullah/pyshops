@@ -84,7 +84,7 @@
                                         <th scope="row">{{ order.id }}</th>
                                         <td>
                                             {% for order_item in order.orderItems.all %}
-                                                {{ order_item }}
+                                            {{ order_item }}
                                             {% endfor %}
                                         </td>
                                         <td>{{ order.paymentId }}</td>
@@ -121,7 +121,7 @@
                                                     <input type="submit" value="Save Address">
                                                 </form>
 
-                                                    <a href="#">Edit <i class="icon-edit"></i></a></p>
+                                                <a href="#">Edit <i class="icon-edit"></i></a></p>
                                             </div><!-- End .card-body -->
                                         </div><!-- End .card-dashboard -->
                                     </div><!-- End .col-lg-6 -->
@@ -141,35 +141,14 @@
 
                             <div class="tab-pane fade" id="tab-account" role="tabpanel"
                                  aria-labelledby="tab-account-link">
-                                <form action="#">
+                                <form action="" method="post">
                                     <div class="row">
-                                        <div class="col-sm-6">
-                                            <label>First Name *</label>
-                                            <input type="text" class="form-control" required>
+                                        <div class="col-sm-12">
+                                            {% csrf_token %}
+                                            {{ profileForm.as_p }}
                                         </div><!-- End .col-sm-6 -->
 
-                                        <div class="col-sm-6">
-                                            <label>Last Name *</label>
-                                            <input type="text" class="form-control" required>
-                                        </div><!-- End .col-sm-6 -->
-                                    </div><!-- End .row -->
-
-                                    <label>Display Name *</label>
-                                    <input type="text" class="form-control" required>
-                                    <small class="form-text">This will be how your name will be displayed in the account
-                                        section and in reviews</small>
-
-                                    <label>Email address *</label>
-                                    <input type="email" class="form-control" required>
-
-                                    <label>Current password (leave blank to leave unchanged)</label>
-                                    <input type="password" class="form-control">
-
-                                    <label>New password (leave blank to leave unchanged)</label>
-                                    <input type="password" class="form-control">
-
-                                    <label>Confirm new password</label>
-                                    <input type="password" class="form-control mb-2">
+                                    </div>
 
                                     <button type="submit" class="btn btn-outline-primary-2">
                                         <span>SAVE CHANGES</span>
