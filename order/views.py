@@ -10,64 +10,70 @@ from django.utils import timezone
 
 
 def add_to_cart(request, pk):
-    item = get_object_or_404(Product, pk=pk)
-    order_item = Cart.objects.get_or_create(item=item, user=request.user, purchased=False)
-    order_qs = Order.objects.filter(user=request.user, ordered=False)
-    if order_qs.exists():
-        order = order_qs[0]
-        if order.orderItems.filter(item=item).exists():
-            size = request.POST.get('size')
-            color = request.POST.get('color')
-            quantity = request.POST.get('quantity')
-            if quantity:
-                order_item[0].quantity += int(quantity)
+    if request.user.is_authenticated:
+        item = get_object_or_404(Product, pk=pk)
+        order_item = Cart.objects.get_or_create(item=item, user=request.user, purchased=False)
+        order_qs = Order.objects.filter(user=request.user, ordered=False)
+        if order_qs.exists():
+            order = order_qs[0]
+            if order.orderItems.filter(item=item).exists():
+                size = request.POST.get('size')
+                color = request.POST.get('color')
+                quantity = request.POST.get('quantity')
+                if quantity:
+                    order_item[0].quantity += int(quantity)
+                else:
+                    order_item[0].quantity += 1
+                order_item[0].size = size
+                order_item[0].color = color
+                order_item[0].save()
+                return redirect('store:index')
             else:
-                order_item[0].quantity += 1
-            order_item[0].size = size
-            order_item[0].color = color
-            order_item[0].save()
-            return redirect('store:index')
+                size = request.POST.get('size')
+                color = request.POST.get('color')
+                order_item[0].size = size
+                order_item[0].color = color
+                order.orderItems.add(order_item[0])
+                return redirect('store:index')
         else:
-            size = request.POST.get('size')
-            color = request.POST.get('color')
-            order_item[0].size = size
-            order_item[0].color = color
+            order = Order(user=request.user)
+            order.save()
             order.orderItems.add(order_item[0])
             return redirect('store:index')
     else:
-        order = Order(user=request.user)
-        order.save()
-        order.orderItems.add(order_item[0])
-        return redirect('store:index')
+        return redirect('account:login')
 
 
 def cart_view(request):
-    carts = Cart.objects.filter(user=request.user, purchased=False)
-    orders = Order.objects.filter(user=request.user, ordered=False)
-    if carts.exists() and orders.exists():
-        order = orders[0]
-        coupon_form = CouponCodeForm(request.POST)
-        if coupon_form.is_valid():
-            current_time = timezone.now()
-            code = coupon_form.cleaned_data.get('code')
-            coupon_obj = Coupon.objects.get(code=code, active = True)
-            if coupon_obj.valid_to >= current_time:
-                get_discount = (coupon_obj.discount / 100) * order.get_totals()
-                after_discount_total_price = order.get_totals() - get_discount
-                request.session['discount_total'] = after_discount_total_price
-                request.session['coupon_code'] = code
-                return redirect('order:cart')
+    if request.user.is_authenticated:
+        carts = Cart.objects.filter(user=request.user, purchased=False)
+        orders = Order.objects.filter(user=request.user, ordered=False)
+        if carts.exists() and orders.exists():
+            order = orders[0]
+            coupon_form = CouponCodeForm(request.POST)
+            if coupon_form.is_valid():
+                current_time = timezone.now()
+                code = coupon_form.cleaned_data.get('code')
+                coupon_obj = Coupon.objects.get(code=code, active = True)
+                if coupon_obj.valid_to >= current_time:
+                    get_discount = (coupon_obj.discount / 100) * order.get_totals()
+                    after_discount_total_price = order.get_totals() - get_discount
+                    request.session['discount_total'] = after_discount_total_price
+                    request.session['coupon_code'] = code
+                    return redirect('order:cart')
 
-        after_discount_total_price = request.session.get('discount_total')
-        coupon_code = request.session.get('coupon_code')
-        context = {
-            'carts': carts,
-            'order': order,
-            'coupon_form': coupon_form,
-            'coupon_code': coupon_code,
-            'after_discount_total_price': after_discount_total_price,
-        }
-        return render(request, 'store/cart.html', context)
+            after_discount_total_price = request.session.get('discount_total')
+            coupon_code = request.session.get('coupon_code')
+            context = {
+                'carts': carts,
+                'order': order,
+                'coupon_form': coupon_form,
+                'coupon_code': coupon_code,
+                'after_discount_total_price': after_discount_total_price,
+            }
+            return render(request, 'store/cart.html', context)
+    else:
+        return redirect('account:login')
 
 
 def remove_item_from_cart(request, pk):
