@@ -4,6 +4,7 @@ from django.template.defaultfilters import slugify
 
 from django.contrib.auth import get_user_model
 
+User = get_user_model()
 
 class Category(models.Model):
     name = models.CharField(max_length=50, blank=False, null=False)

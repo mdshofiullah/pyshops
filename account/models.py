@@ -3,8 +3,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from django.contrib.auth.models import User
-from django.contrib.auth.models import BaseUserManager
+from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 
@@ -14,8 +13,8 @@ class CustomManager(BaseUserManager):
         if not email:
             raise ValueError('Email is required')
         email = self.normalize_email(email)
-        user = self.model(email=email, user=user_name, **extra_fields)
-        user.set_passworde(make_password(password))
+        user = self.model(email=email, user_name=user_name, **extra_fields)
+        user.set_password(password)
         user.save(using=self._db)
         return user
 
@@ -38,10 +37,28 @@ class CustomManager(BaseUserManager):
         if extra_fields.get('is_varify') is not True:
             raise ValueError('superuser must be is_varify=true')
 
-        if extra_fields.get('user_type') is not True:
-            raise ValueError('superuser must be user_type=true')
-
         return self.create_user(email, user_name, password, **extra_fields)
+
+
+class User(AbstractBaseUser, PermissionsMixin):
+    USER_TYPE = (
+        ('visitor', 'visitor'),
+        ('developer', 'developer'),
+    )
+    email = models.EmailField(unique=True)
+    user_name = models.CharField(max_length=100, unique=True)
+    REQUIRED_FIELDS = ['user_name']
+    USERNAME_FIELD = 'email'
+    user_type = models.CharField(max_length=100, choices=USER_TYPE, default=USER_TYPE[0])
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=False)
+    is_varify = models.BooleanField(default=False)
+
+    objects = CustomManager()
+
+    def __str__(self):
+        return str(self.email)
 
 
 class Profile(models.Model):
