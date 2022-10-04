@@ -8,6 +8,8 @@ from coupon.forms import CouponCodeForm
 
 from django.utils import timezone
 
+from notification.notific import SendNotification
+
 
 def add_to_cart(request, pk):
     if request.user.is_authenticated:
@@ -27,6 +29,11 @@ def add_to_cart(request, pk):
                 order_item[0].size = size
                 order_item[0].color = color
                 order_item[0].save()
+
+                # Notification and message
+                message = f"Quantity updated"
+                SendNotification(request.user, message)
+
                 return redirect('store:index')
             else:
                 size = request.POST.get('size')
@@ -39,6 +46,9 @@ def add_to_cart(request, pk):
             order = Order(user=request.user)
             order.save()
             order.orderItems.add(order_item[0])
+            # Notification and message
+            message = f"Product added to your cart"
+            SendNotification(request.user, message)
             return redirect('store:index')
     else:
         return redirect('account:login')
@@ -54,7 +64,7 @@ def cart_view(request):
             if coupon_form.is_valid():
                 current_time = timezone.now()
                 code = coupon_form.cleaned_data.get('code')
-                coupon_obj = Coupon.objects.get(code=code, active = True)
+                coupon_obj = Coupon.objects.get(code=code, active=True)
                 if coupon_obj.valid_to >= current_time:
                     get_discount = (coupon_obj.discount / 100) * order.get_totals()
                     after_discount_total_price = order.get_totals() - get_discount

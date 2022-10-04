@@ -72,7 +72,7 @@ class Profile(models.Model):
     date_joined = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user.username}'s Profile"
+        return f"{self.user.user_name}'s Profile"
 
 
 @receiver(post_save, sender=User)
